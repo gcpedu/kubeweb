@@ -1,0 +1,42 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nodehello-v3
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nodehello
+        track: alpha
+    spec:
+      containers:
+        - name: nodehello
+          image: "gcr.io/kubeweb1/nodehello:v3"
+          ports:
+            - name: http
+              containerPort: 8080
+          resources:
+            limits:
+              cpu: 0.2
+              memory: "150Mi"
+          volumeMounts:
+            - name: "nodehello-conf"
+              mountPath: "/conf"
+            - name: "nodehello-auth"
+              mountPath: "/auth"
+      volumes:
+        - name: "nodehello-auth"
+          secret:
+            secretName: "nodehello-auth"
+            items:
+              - key: "nodehello.jwt.json"
+                path: "nodehello.jwt.json"
+        - name: "nodehello-conf"
+          configMap:
+            name: "nodehello-conf"
+            items:
+              - key: "nodehello.config.json"
+                path: "nodehello.config.json"
+
+

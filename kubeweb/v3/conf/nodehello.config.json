@@ -1,0 +1,6 @@
+{
+ "version": "v3-from-development",
+ "projectid" : "kubeweb3",
+ "kind" : "kubework",
+ "keyfile" : "auth/nodehello.jwt.json"
+}
