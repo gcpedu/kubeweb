@@ -1,4 +1,4 @@
 source ./0.Config.sh
 set -o xtrace
 
-gcloud docker -- push gcr.io/$PROJECTID/$APPNAME:v1
+gcloud docker -- push gcr.io/kubeweb/$APPNAME:v1

@@ -12,7 +12,7 @@ spec:
     spec:
       containers:
         - name: nodehello
-          image: "gcr.io/kubeweb1/nodehello:v2"
+          image: "gcr.io/kubeweb/nodehello:v2"
           ports:
             - name: http
               containerPort: 8080

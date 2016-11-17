@@ -1,7 +1,7 @@
 source ./0.Config.sh
 set -o xtrace
 
-gcloud docker -- push gcr.io/$PROJECTID/$APPNAME:v3
+gcloud docker -- push gcr.io/kubeweb/$APPNAME:v3
 gcloud docker -- images
 kubectl delete configmap nodehello-conf
 kubectl create configmap nodehello-conf --from-file=v3.prod.resources/nodehello.config.json

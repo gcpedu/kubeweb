@@ -1,6 +1,8 @@
 source 0.Config.sh
 set -o xtrace
 
+gcloud config set compute/zone $ZONE
+
 # Get credentials for the cluster and store this is .kube/config
 gcloud container clusters get-credentials $CLUSTER
 
