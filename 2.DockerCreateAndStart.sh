@@ -7,7 +7,7 @@ set -o xtrace
 #gcloud compute --project $PROJECTID firewall-rules create $FWRULE --allow tcp:8080-8089 --network "default" --source-ranges "0.0.0.0/0"
 
 # Create an instance of the container from our image
-docker create -p 8080:8080 --name ${APPNAME}.v1 -t gcr.io/kubeweb/$APPNAME:v1
+docker create -p 8080:8080 --name ${APPNAME}.v1 -t gcr.io/$PROJECTID/$APPNAME:v1
 
 # Start our image
 docker start ${APPNAME}.v1
