@@ -32,6 +32,7 @@ var configuration = JSON.parse(
 var projectId = configuration.projectid;
 var kind = configuration.kind;
 var keyfile = configuration.keyfile;
+var namespace = configuration.namespace
 
 // Instantiates a datastore client using configuration from file
 var datastoreClient = datastore({
@@ -57,9 +58,9 @@ for (var nic in nics)
 
 // Cloud Logging
 var logging = cloudlogging({
-  projectId: projectId,
-  keyFilename: keyfile
+  projectId: projectId
 });
+
 var log = logging.log("nodehellolog");
 var resource = {
   type: 'global'
@@ -81,10 +82,12 @@ http.createServer(function (req, res) {
     hello_form.handle(req, {
         success: function (form) {
             res.writeHead(200, { 'Content-Type': 'text/html' });
-            res.write('<h1>Success!</h1>');
             var time = new Date().toISOString();
             // The Cloud Datastore key for the new entity
-            var kubeworkKey = datastoreClient.key([kind, entityname]);
+            var kubeworkKey = datastoreClient.key({
+              namespace: namespace,
+              path: [kind, entityname]
+            });
             // Prepares the new message entity with data from form
             var message = {
               key: kubeworkKey,
@@ -93,8 +96,8 @@ http.createServer(function (req, res) {
                 headers: JSON.stringify(req.headers).substring(0,1500),
                 hostname: os.hostname(),
                 interfaces: addresses,
+                targetconfig: configuration.targetconfig,
                 pid: process.pid,
-                platform: process.platform,
                 recipient: form.data.recipient,
                 message: form.data.message,
                 sender: form.data.sender,
@@ -105,14 +108,18 @@ http.createServer(function (req, res) {
             entry = log.entry(resource, message.data);
             log.info(entry, logError);
 
+            res.write('<pre>' + util.inspect(form.data) + '</pre>');
             datastoreClient.save(message, (err) => {
               if (err) {
                 entry = log.entry(resource, "Datastore error" + err);
                 log.error(entry, logError);
+                res.end('<h1>Error:</h1></p> ' + err);
                 return;
               }
+              else {
+                res.end('<h1>Success!</h1>');
+              }
             });
-            res.end('<pre>' + util.inspect(form.data) + '</pre>');
         },
         // perhaps also have error and empty events
         other: function (form) {

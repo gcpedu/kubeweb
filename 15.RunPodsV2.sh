@@ -2,6 +2,7 @@ source 0.Config.sh
 set -o xtrace
 
 #kubectl run $APPNAME --image=gcr.io/$PROJECTID/$APPNAME:v2 --port=8080
+sed "s/YOURPROJECTID/$PROJECTID/" v2/template.deployment.yaml > v2/deployment.yaml
 kubectl create -f v2/deployment.yaml
 #Use this command to just see the pods for the beta track
 #kubectl get pods -l track=beta

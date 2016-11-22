@@ -1,4 +1,5 @@
 export APPNAME=nodehello
+export PROJECTID=kubeweb9
 export CLUSTER=kubeweb1gke
 #Make sure you have the PROJECTID and not the  Project Name or Number
 export PROJECTID=kubeweb1

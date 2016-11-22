@@ -7,7 +7,7 @@ var util = require('util');
 var fs = require('fs');
 var forms = require('forms');
 var jsontemplate = require ('./json-template');
-var configurationFile = 'nodehello.config.json';
+var configurationFile = 'conf/nodehello.config.json';
 var datastore = require('@google-cloud/datastore');
 var fields = forms.fields;
 var validators = forms.validators;
@@ -31,6 +31,7 @@ var configuration = JSON.parse(
 var projectId = configuration.projectid;
 var kind = configuration.kind;
 var keyfile = configuration.keyfile;
+var namespace = configuration.namespace;
 
 // Instantiates a datastore client using configuration from file
 var datastoreClient = datastore({
@@ -59,10 +60,12 @@ http.createServer(function (req, res) {
     hello_form.handle(req, {
         success: function (form) {
             res.writeHead(200, { 'Content-Type': 'text/html' });
-            res.write('<h1>Success!</h1>');
             var time = new Date().toISOString();
             // The Cloud Datastore key for the new entity
-            var kubeworkKey = datastoreClient.key([kind, entityname]);
+            var kubeworkKey = datastoreClient.key({
+              namespace: namespace,
+              path: [kind, entityname]
+            });
             // Prepares the new message entity with data from form
             var message = {
               key: kubeworkKey,
@@ -73,19 +76,24 @@ http.createServer(function (req, res) {
                 interfaces: addresses,
                 pid: process.pid,
                 platform: process.platform,
+		targetconfig: configuration.targetconfig,
                 recipient: form.data.recipient,
                 message: form.data.message,
                 sender: form.data.sender,
                 version: "V2" 
               }
             };
+            res.write('<pre>' + util.inspect(form.data) + '</pre>');
             datastoreClient.save(message, (err) => {
               if (err) {
                 console.log("Datastore Error" + err);
+                res.end('<h1>Error!</h1>');
                 return;
               }
+              else {
+                res.end('<h1>Success</h1>');
+              }
             });
-            res.end('<pre>' + util.inspect(form.data) + '</pre>');
         },
         // perhaps also have error and empty events
         other: function (form) {

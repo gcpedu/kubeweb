@@ -1,7 +1,7 @@
 {
  "projectid" : "kubeweb9",
- "targetconfig" : "Development Environment Configuration",
- "namespace" : "kubedev",
+ "targetconfig" : "Production Environment Configuration",
+ "namespace" : "kubeprod",
  "kind" : "kubework",
  "keyfile" : "auth/nodehello.jwt.json"
 }
